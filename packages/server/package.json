@@ -1,6 +1,6 @@
 {
   "name": "@danilupion/turbo-server",
-  "version": "1.0.0",
+  "version": "1.0.5",
   "author": {
     "name": "Dani Lupión",
     "email": "danilupion@gmail.com"
@@ -29,12 +29,17 @@
   },
   "dependencies": {
     "@danilupion/turbo-common": "1.0.0",
+    "@types/passport-google-oauth20": "^2.0.11",
+    "@types/passport": "^1.0.12",
+    "@types/passport-facebook": "^2.1.11",
     "bcrypt": "^5.1.0",
     "config": "^3.3.8",
     "express": "^4.18.2",
     "express-validator": "^7.0.1",
+    "jest-environment-node": "^29.5.0",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^7.0.4",
+    "mongodb-memory-server": "^8.12.2",
     "nodemailer": "^6.9.1",
     "passport": "^0.6.0",
     "passport-anonymous": "^1.0.1",
@@ -53,10 +58,7 @@
     "@types/jsonwebtoken": "^9.0.1",
     "@types/node": "^18.15.11",
     "@types/nodemailer": "^6.4.7",
-    "@types/passport": "^1.0.12",
     "@types/passport-anonymous": "^1.0.3",
-    "@types/passport-facebook": "^2.1.11",
-    "@types/passport-google-oauth20": "^2.0.11",
     "@types/passport-jwt": "^3.0.8",
     "@types/supertest": "^2.0.12",
     "@typescript-eslint/eslint-plugin": "^5.59.0",
@@ -68,9 +70,7 @@
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-jest": "^27.2.1",
     "jest": "^29.5.0",
-    "jest-environment-node": "^29.5.0",
     "lint-staged": "^13.2.1",
-    "mongodb-memory-server": "^8.12.2",
     "nodemon": "^2.0.22",
     "prettier": "^2.8.7",
     "typescript": "^5.0.4"
