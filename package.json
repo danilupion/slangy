@@ -1,0 +1,42 @@
+{
+  "name": "@danilupion/turbo",
+  "private": true,
+  "author": {
+    "name": "Dani Lupión",
+    "email": "danilupion@gmail.com"
+  },
+  "license": "MIT",
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
+  },
+  "scripts": {
+    "test:common": "yarn workspace @danilupion/turbo-common test",
+    "test:client": "yarn workspace @danilupion/turbo-client test",
+    "test:server": "yarn workspace @danilupion/turbo-server test",
+    "test": "yarn run:parallel 'yarn test:common' 'yarn test:client' 'yarn test:server'",
+    "test:watch:common": "yarn workspace @danilupion/turbo-common test:watch",
+    "test:watch:client": "yarn workspace @danilupion/turbo-client test:watch",
+    "test:watch:server": "yarn workspace @danilupion/turbo-server test:watch",
+    "test:watch": "yarn run:parallel 'yarn test:watch:common' 'yarn test:watch:client' 'yarn test:watch:server'",
+    "build:watch:common": "yarn workspace @danilupion/turbo-common build:watch",
+    "build:watch:client": "yarn workspace @danilupion/turbo-client build:watch",
+    "build:watch:server": "yarn workspace @danilupion/turbo-server build:watch",
+    "build:watch": "yarn build:common && yarn run:parallel 'yarn build:watch:common' 'yarn build:watch:client' 'yarn build:watch:server'",
+    "build:check:common": "yarn workspace @danilupion/turbo-common build:check",
+    "build:check:client": "yarn workspace @danilupion/turbo-client build:check",
+    "build:check:server": "yarn workspace @danilupion/turbo-server build:check",
+    "build:common": "yarn workspace @danilupion/turbo-common build",
+    "build:client": "yarn workspace @danilupion/turbo-client build",
+    "build:server": "yarn workspace @danilupion/turbo-server build",
+    "build": "yarn build:common && yarn run:parallel 'yarn build:client' 'yarn build:server'",
+    "run:parallel": "./scripts/run-parallel.sh",
+    "clean:install": "./scripts/clean-install.sh",
+    "clean:build": "./scripts/clean-build.sh",
+    "clean": "yarn run:parallel 'yarn clean:install' 'yarn clean:build'"
+  },
+  "devDependencies": {
+    "husky": "^8.0.3"
+  }
+}
