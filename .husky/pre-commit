@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+yarn build:check
+yarn workspace @danilupion/turbo-common lint-staged
+yarn workspace @danilupion/turbo-server lint-staged
+yarn workspace @danilupion/turbo-client lint-staged

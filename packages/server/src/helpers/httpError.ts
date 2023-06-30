@@ -1,95 +1,101 @@
-import StatusCode from '@danilupion/turbo-common/http/statusCode.js';
+import {
+  ClientErrorStatusCode,
+  ServerErrorStatusCode,
+} from '@danilupion/turbo-common/http/statusCode.js';
 
 type MappedValidationError = { [key: string]: string[] };
 
-export abstract class BaseHttpException<T = never> extends Error {
-  protected metaValue: T | undefined;
+type ErrorStatusCode = ClientErrorStatusCode | ServerErrorStatusCode;
+
+type MetaType<T> = T extends never ? undefined : T;
+
+const ERROR_MESSAGES: { [key in ErrorStatusCode]: string } = {
+  [ClientErrorStatusCode.ClientErrorBadRequest]: 'Bad Request',
+  [ClientErrorStatusCode.ClientErrorUnauthorized]: 'Unauthorized',
+  [ClientErrorStatusCode.ClientErrorPaymentRequired]: 'Payment Required',
+  [ClientErrorStatusCode.ClientErrorForbidden]: 'Forbidden',
+  [ClientErrorStatusCode.ClientErrorNotFound]: 'Not Found',
+  [ClientErrorStatusCode.ClientErrorMethodNotAllowed]: 'Method Not Allowed',
+  [ClientErrorStatusCode.ClientErrorConflict]: 'Conflict',
+  [ClientErrorStatusCode.ClientErrorUnsupportedMediaType]: 'Unsupported Media Type',
+  [ServerErrorStatusCode.ServerErrorInternalServerError]: 'Internal Server Error',
+  [ServerErrorStatusCode.ServerErrorNotImplemented]: 'Not Implemented',
+};
+
+export abstract class BaseHttpException<Meta = never> extends Error {
+  protected metaValue: MetaType<Meta> | undefined;
 
   protected constructor(
-    public readonly statusCode: number,
+    public readonly statusCode: ErrorStatusCode,
     public readonly message: string,
-    ...rest: T extends never ? [] : [T]
+    meta?: MetaType<Meta>,
   ) {
     super(message);
-    if (rest.length === 1) {
-      this.metaValue = rest[0];
+    if (meta) {
+      this.metaValue = meta;
     }
   }
 
-  get meta(): T extends never ? undefined : T {
-    return this.metaValue as T extends never ? undefined : T;
+  public get meta(): MetaType<Meta> {
+    return this.metaValue as MetaType<Meta>;
   }
 }
 
 interface HttpExceptionInstance<T = never> {
-  get meta(): T extends never ? undefined : T;
-  statusCode: number;
-  message: string;
+  get meta(): MetaType<T>;
+  readonly statusCode: number;
+  readonly message: string;
 }
 
 export interface HttpException<T = never> {
-  new (..._params: T extends never ? [] : [T]): HttpExceptionInstance<T>;
+  new (_meta?: MetaType<T>): HttpExceptionInstance<T>;
 }
 
-const generateHttpStatusCodeError = <FT = never>(
-  statusCode: StatusCode,
-  defaultMessage: string,
-): HttpException<FT> =>
-  class StatusCodeError<T = FT> extends BaseHttpException<T> {
-    constructor(...params: T extends never ? [] : [T]) {
-      super(statusCode, defaultMessage, ...params);
-      if (params.length === 1) {
-        this.metaValue = params[0];
-      }
+const generateHttpStatusCodeError = <Meta = never>(
+  statusCode: ErrorStatusCode,
+): HttpException<Meta> =>
+  class StatusCodeError<T = Meta> extends BaseHttpException<T> {
+    constructor(meta?: MetaType<T>) {
+      super(statusCode, ERROR_MESSAGES[statusCode], meta);
     }
   };
 
 export const ClientErrorBadRequest = generateHttpStatusCodeError<MappedValidationError>(
-  StatusCode.ClientErrorBadRequest,
-  'Bad Request',
+  ClientErrorStatusCode.ClientErrorBadRequest,
 );
 
 export const ClientErrorUnauthorized = generateHttpStatusCodeError(
-  StatusCode.ClientErrorUnauthorized,
-  'Unauthorized',
+  ClientErrorStatusCode.ClientErrorUnauthorized,
 );
 
 export const ClientErrorPaymentRequired = generateHttpStatusCodeError(
-  StatusCode.ClientErrorPaymentRequired,
-  'Payment Required',
+  ClientErrorStatusCode.ClientErrorPaymentRequired,
 );
 
 export const ClientErrorForbidden = generateHttpStatusCodeError(
-  StatusCode.ClientErrorForbidden,
-  'Forbidden',
+  ClientErrorStatusCode.ClientErrorForbidden,
 );
 
 export const ClientErrorNotFound = generateHttpStatusCodeError(
-  StatusCode.ClientErrorNotFound,
-  'Not Found',
+  ClientErrorStatusCode.ClientErrorNotFound,
 );
 
 export const ClientErrorMethodNotAllowed = generateHttpStatusCodeError(
-  StatusCode.ClientErrorMethodNotAllowed,
-  'Method Not Allowed',
+  ClientErrorStatusCode.ClientErrorMethodNotAllowed,
 );
 
 export const ClientErrorConflict = generateHttpStatusCodeError(
-  StatusCode.ClientErrorConflict,
-  'Conflict',
+  ClientErrorStatusCode.ClientErrorConflict,
 );
 
 export const ClientErrorUnsupportedMediaType = generateHttpStatusCodeError(
-  StatusCode.ClientErrorUnsupportedMediaType,
-  'Unsupported Media Type',
+  ClientErrorStatusCode.ClientErrorUnsupportedMediaType,
 );
 
 export const ServerErrorInternalServerError = generateHttpStatusCodeError<Error | undefined>(
-  StatusCode.ServerErrorInternalServerError,
-  'Internal Server Error',
-) as unknown as HttpException<Error | undefined>;
+  ServerErrorStatusCode.ServerErrorInternalServerError,
+);
 
 export const ServerErrorNotImplemented = generateHttpStatusCodeError(
-  StatusCode.ServerErrorNotImplemented,
-  'Not Implemented',
+  ServerErrorStatusCode.ServerErrorNotImplemented,
 );
