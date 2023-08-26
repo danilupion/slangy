@@ -2,7 +2,7 @@ import { Request as ExpressRequest, Response as ExpressResponse, NextFunction } 
 
 export type Request = ExpressRequest;
 
-export type Response<Body = unknown> = ExpressResponse<Body>;
+export type Response<Body = never> = ExpressResponse<Body>;
 
 export type RequestWithFields<
   Fields extends object,
