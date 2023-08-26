@@ -45,7 +45,7 @@ const validationErrors = validationResult.withDefaults({
   formatter: errorNormalizer,
 });
 
-const errorMapper = (
+const validationErrorMapper = (
   errors: (CustomValidationError | CustomValidationError[])[],
 ): MappedValidationError => {
   return errors.flat().reduce((acc, curr) => {
@@ -69,6 +69,21 @@ const errorMapper = (
   }, {} as MappedValidationError);
 };
 
+const errorMap = {
+  [BaseHttpException.name]: (err: Error) => err,
+  [MongoServerError.name]: (err: Error) => {
+    if (err instanceof MongoServerError && err.code === 11000) {
+      return new ClientErrorConflict();
+    }
+    return new ServerErrorInternalServerError(err);
+  },
+};
+
+const errorMapper = (err: Error) => {
+  const mapper = errorMap[err.constructor.name];
+  return mapper ? mapper(err) : new ServerErrorInternalServerError(err);
+};
+
 const secureHandler =
   <Req extends Request, Res extends Response>(insecureHandler: Controller<Req, Res>) =>
   async (req: Req, res: Res, next: NextFunction) => {
@@ -76,25 +91,20 @@ const secureHandler =
       const errors = validationErrors(req);
 
       if (!errors.isEmpty()) {
-        return next(new ClientErrorBadRequest(errorMapper(errors.array())));
+        return next(new ClientErrorBadRequest(validationErrorMapper(errors.array())));
       }
 
       return await insecureHandler(req, res, next);
     } catch (err) {
-      if (err instanceof BaseHttpException) {
-        return next(err);
-        // Duplicate key error
-      } else if (err instanceof MongoServerError && err.code === 11000) {
-        return next(new ClientErrorConflict());
-      }
-
-      return next(new ServerErrorInternalServerError(err instanceof Error ? err : undefined));
+      return next(err instanceof Error ? errorMapper(err) : new ServerErrorInternalServerError());
     }
   };
 
-type Middleware = ValidationChain | Handler | (ValidationChain | Handler)[];
+type Middleware = Handler | ValidationChain | ValidationChain[];
 
-const isValidationChain = (h: Middleware): h is ValidationChain | ValidationChain[] => {
+const isValidationChain = <Req extends Request, Res extends Response>(
+  h: Middleware | Controller<Req, Res>,
+): h is ValidationChain | ValidationChain[] => {
   return Array.isArray(h) || (h as ValidationChain).builder !== undefined;
 };
 
@@ -103,11 +113,11 @@ const methodFactory =
   <Req extends Request, Res extends Response>(
     router: Router,
     path: string,
-    ...middleWare: [...Middleware[], Controller<Req, Res>]
+    ...handlers: [...Middleware[], Controller<Req, Res>]
   ) => {
     router[method](
       path,
-      ...(middleWare as Handler[]).map((m) => (isValidationChain(m) ? m : secureHandler(m))),
+      ...(handlers as Handler[]).map((m) => (isValidationChain(m) ? m : secureHandler(m))),
     );
   };
 

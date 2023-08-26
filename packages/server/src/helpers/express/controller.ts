@@ -2,8 +2,7 @@ import { Request as ExpressRequest, Response as ExpressResponse, NextFunction } 
 
 export type Request = ExpressRequest;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type Response<Body = any> = ExpressResponse<Body>;
+export type Response<Body = unknown> = ExpressResponse<Body>;
 
 export type RequestWithFields<
   Fields extends object,
@@ -42,11 +41,11 @@ export type RequestWithParams<Params, BaseRequest extends Request = Request> = B
 
 export type ResponseWithBody<Body> = Response<Body>;
 
-export type Controller<Req extends Request, Res extends Response> = (
+export type Controller<Req extends Request = Request, Res extends Response = Response> = (
   req: Req,
   res: Res,
   next: NextFunction,
-) => Promise<void | Res> | void | Res;
+) => Promise<void | Res | NextFunction> | void | Res | NextFunction;
 
 export default <Req extends Request = Request, Res extends Response = Response>(
   controller: Controller<Req, Res>,
