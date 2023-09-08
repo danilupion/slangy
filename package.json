@@ -36,6 +36,7 @@
     "clean:install": "./scripts/clean-install.sh",
     "clean:build": "./scripts/clean-build.sh",
     "clean": "yarn run:parallel 'yarn clean:install' 'yarn clean:build'",
+    "publish-package": "yarn build && ./scripts/publish.sh",
     "prepare": "husky install"
   },
   "devDependencies": {
