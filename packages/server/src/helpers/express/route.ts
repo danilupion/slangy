@@ -70,7 +70,6 @@ const validationErrorMapper = (
 };
 
 const errorMap = {
-  [BaseHttpException.name]: (err: Error) => err,
   [MongoServerError.name]: (err: Error) => {
     if (err instanceof MongoServerError && err.code === 11000) {
       return new ClientErrorConflict();
@@ -80,6 +79,9 @@ const errorMap = {
 };
 
 const errorMapper = (err: Error) => {
+  if (err instanceof BaseHttpException) {
+    return err;
+  }
   const mapper = errorMap[err.constructor.name];
   return mapper ? mapper(err) : new ServerErrorInternalServerError(err);
 };
