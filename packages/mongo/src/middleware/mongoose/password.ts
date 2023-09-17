@@ -1,4 +1,4 @@
-import { password } from '@danilupion/turbo-common/regex.js';
+import { password } from '@slangy/common/regex.js';
 import { compare, hash } from 'bcrypt';
 import { Schema, SchemaDefinition } from 'mongoose';
 

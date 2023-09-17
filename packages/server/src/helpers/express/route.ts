@@ -1,5 +1,5 @@
-import Method from '@danilupion/turbo-common/http/method.js';
-import { ValidationError as MappedValidationError } from '@danilupion/turbo-common/rest/error.js';
+import Method from '@slangy/common/http/method.js';
+import { ValidationError as MappedValidationError } from '@slangy/common/rest/error.js';
 import { Handler, NextFunction, Router } from 'express';
 import { FieldValidationError, ValidationChain, validationResult } from 'express-validator';
 import { ValidationError } from 'express-validator/src/base.js';
@@ -110,12 +110,17 @@ const isValidationChain = <Req extends Request, Res extends Response>(
   return Array.isArray(h) || (h as ValidationChain).builder !== undefined;
 };
 
+export type MethodHandlers<Req extends Request, Res extends Response> = [
+  ...Middleware[],
+  Controller<Req, Res>,
+];
+
 const methodFactory =
   (method: Method) =>
   <Req extends Request, Res extends Response>(
     router: Router,
     path: string,
-    ...handlers: [...Middleware[], Controller<Req, Res>]
+    ...handlers: MethodHandlers<Req, Res>
   ) => {
     router[method](
       path,

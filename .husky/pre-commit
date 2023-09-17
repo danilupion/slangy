@@ -2,6 +2,7 @@
 . "$(dirname -- "$0")/_/husky.sh"
 
 yarn build:check
-yarn workspace @danilupion/turbo-common lint-staged
-yarn workspace @danilupion/turbo-server lint-staged
-yarn workspace @danilupion/turbo-client lint-staged
+yarn workspace @slangy/common lint-staged
+yarn workspace @slangy/server lint-staged
+yarn workspace @slangy/client lint-staged
+yarn workspace @slangy/mongo lint-staged

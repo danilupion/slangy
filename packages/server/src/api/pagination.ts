@@ -1,1 +1,1 @@
-export * from '@danilupion/turbo-common/api/pagination.js';
+export * from '@slangy/common/api/pagination.js';

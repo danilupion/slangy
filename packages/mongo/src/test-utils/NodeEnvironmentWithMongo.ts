@@ -19,7 +19,10 @@ class NodeEnvironmentWithMongo extends NodeEnvironment.default {
 
   async teardown() {
     if (this.mongoServer) {
-      await this.mongoServer.stop(true);
+      await this.mongoServer.stop({
+        force: true,
+        doCleanup: true,
+      });
       this.mongoServer = undefined;
     }
     await super.teardown();

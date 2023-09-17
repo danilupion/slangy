@@ -1,1 +1,1 @@
-export { email, password } from '@danilupion/turbo-common/regex.js';
+export { email, password } from '@slangy/common/regex.js';
