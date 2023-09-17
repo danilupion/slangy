@@ -1,6 +1,2 @@
-export {
-  SuccessStatusCode,
-  ClientErrorStatusCode,
-  ServerErrorStatusCode,
-} from '@danilupion/turbo-common/http/statusCode.js';
-export { default as Method } from '@danilupion/turbo-common/http/method.js';
+export * from '@slangy/common/http/statusCode.js';
+export { default as Method } from '@slangy/common/http/method.js';

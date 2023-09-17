@@ -1,4 +1,4 @@
-import Method from '@danilupion/turbo-common/http/method.js';
+import Method from '@slangy/common/http/method.js';
 
 let token: string | undefined;
 

@@ -1,1 +1,1 @@
-export * from '@danilupion/turbo-common/regex.js';
+export * from '@slangy/common/regex.js';

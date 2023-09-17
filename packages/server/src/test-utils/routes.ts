@@ -1,5 +1,6 @@
-import Method from '@danilupion/turbo-common/http/method.js';
-import { Router } from 'express';
+import Method from '@slangy/common/http/method.js';
+
+import { Router } from '../helpers/express/router.js';
 
 // eslint-disable-next-line jest/no-export
 export default (
@@ -9,18 +10,24 @@ export default (
   ...extraChecks: (() => void)[]
 ) => {
   describe(`Router ${name}`, () => {
-    const registeredRoutes: { path: string; methods: { [key in Method]?: boolean } }[] =
-      router.stack
-        .filter((s) => !!s.route)
-        .map((s) => ({
-          path: s.route.path,
-          methods: s.route.methods,
-        }));
+    const registeredRoutes: { path: string; methods: { [key in Method]?: boolean } }[] = router
+      .getExpressRouter()
+      .stack.filter((s) => !!s.route)
+      .map((s) => ({
+        path: s.route.path,
+        methods: s.route.methods,
+      }));
 
-    const registeredRouters: RegExp[] = router.stack.filter((s) => !s.route).map((s) => s.regexp);
+    const registeredRouters: RegExp[] = router
+      .getExpressRouter()
+      .stack.filter((s) => !s.route)
+      .map((s) => s.regexp);
 
-    const routersInRoutes = routes.filter((r) => typeof r === 'string') as string[];
-    const routesInRoutes = routes.filter((r) => typeof r !== 'string') as [Method, string][];
+    // Copy routes to avoid mutating the original array and add a catch-all route
+    const routesCopy = [...routes, '/*'];
+
+    const routersInRoutes = routesCopy.filter((r) => typeof r === 'string') as string[];
+    const routesInRoutes = routesCopy.filter((r) => typeof r !== 'string') as [Method, string][];
 
     routersInRoutes.forEach((route, index) => {
       it(`Should register router at ${route}`, () => {
@@ -39,8 +46,8 @@ export default (
       });
     });
 
-    it(`Should have exactly ${routes.length} routes`, () => {
-      expect(router.stack).toHaveLength(routes.length);
+    it(`Should have exactly ${routesCopy.length} routes`, () => {
+      expect(router.getExpressRouter().stack).toHaveLength(routesCopy.length);
     });
 
     for (const check of extraChecks) {

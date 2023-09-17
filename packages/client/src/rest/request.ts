@@ -1,4 +1,4 @@
-import { BadRequestError, ValidationError } from '@danilupion/turbo-common/rest/error.js';
+import { BadRequestError, ValidationError } from '@slangy/common/rest/error.js';
 import { stringify } from 'qs';
 
 import {

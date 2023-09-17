@@ -1,7 +1,4 @@
-import {
-  ClientErrorStatusCode,
-  ServerErrorStatusCode,
-} from '@danilupion/turbo-common/http/statusCode.js';
+import { ClientErrorStatusCode, ServerErrorStatusCode } from '@slangy/common/http/statusCode.js';
 
 type MappedValidationError = { [key: string]: string[] };
 
