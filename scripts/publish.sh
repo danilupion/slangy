@@ -43,7 +43,7 @@ git tag "$WORKSPACE@$NEW_VERSION"
 git push origin "$WORKSPACE@$NEW_VERSION"
 
 # Publish the package
-yarn publish --access public
+yarn publish --access public --new-version "$NEW_VERSION"
 
 # Return to root
 cd "$ROOT_DIR"
