@@ -5,4 +5,5 @@ yarn build:check
 yarn workspace @slangy/common lint-staged
 yarn workspace @slangy/server lint-staged
 yarn workspace @slangy/client lint-staged
+yarn workspace @slangy/react lint-staged
 yarn workspace @slangy/mongo lint-staged
