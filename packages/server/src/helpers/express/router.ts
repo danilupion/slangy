@@ -2,7 +2,7 @@ import { Router as ExpressRouter } from 'express';
 
 import { ServerErrorStatusCode } from '../../http.js';
 
-import { Request, Response } from './controller.js';
+import { Controller, Request, Response } from './controller.js';
 import { MethodHandlers, deleteRoute, getRoute, patchRoute, postRoute, putRoute } from './route.js';
 
 const routes = {
@@ -13,13 +13,18 @@ const routes = {
   delete: deleteRoute,
 };
 
+type RouterUse = {
+  (path: string, pathRouter: Router): Router;
+  (...controllers: Controller[]): Router;
+};
+
 export type Router = {
   [key in keyof typeof routes]: <Req extends Request, Res extends Response>(
     path: string,
     ...handlers: MethodHandlers<Req, Res>
   ) => Router;
 } & {
-  use: (path: string, pathRouter: Router) => Router;
+  use: RouterUse;
   getExpressRouter: () => ExpressRouter;
 };
 
@@ -33,13 +38,19 @@ const router = (): Router => {
   let frozen = false;
 
   const self: Router = {
-    use: (path: string, pathRouter: Router) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    use: ((...args: any[]) => {
       if (frozen) {
         throw new Error('Cannot register routes after router has been frozen');
       }
-      router.use(path, pathRouter.getExpressRouter());
+      if (typeof args[0] === 'string') {
+        const [path, pathRouter] = args;
+        router.use(path, pathRouter.getExpressRouter());
+      } else {
+        router.use(...args);
+      }
       return self;
-    },
+    }) as RouterUse,
     ...(Object.keys(routes) as (keyof typeof routes)[]).reduce(
       (acc, method) => ({
         ...acc,
