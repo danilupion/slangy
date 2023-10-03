@@ -33,6 +33,12 @@ yarn version --$BUMP_TYPE --no-git-tag-version
 # Get new version from package.json
 NEW_VERSION=$(cat package.json | grep '"version"' | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | tr -d '[[:space:]]')
 
+# Remove dist directory
+rm -rf dist
+
+# Build the package
+yarn build
+
 # Commit and push changes
 git add package.json
 git commit -m "$WORKSPACE: bump to $NEW_VERSION"
