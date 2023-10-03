@@ -5,3 +5,5 @@ export type InnerKeys<T> = {
 export type FieldsWithMaybePromise<T> = {
   [K in keyof T]: Promise<T[K]> | T[K];
 };
+
+export type ArrayElement<T> = T extends (infer E)[] ? E : never;
