@@ -86,7 +86,7 @@ const errorMapper = (err: Error) => {
   return mapper ? mapper(err) : new ServerErrorInternalServerError(err);
 };
 
-const secureHandler =
+export const secureHandler =
   <Req extends Request, Res extends Response>(insecureHandler: Controller<Req, Res>) =>
   async (req: Req, res: Res, next: NextFunction) => {
     try {

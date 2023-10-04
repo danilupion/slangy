@@ -3,7 +3,15 @@ import { Router as ExpressRouter } from 'express';
 import { ServerErrorStatusCode } from '../../http.js';
 
 import { Controller, Request, Response } from './controller.js';
-import { MethodHandlers, deleteRoute, getRoute, patchRoute, postRoute, putRoute } from './route.js';
+import {
+  MethodHandlers,
+  deleteRoute,
+  getRoute,
+  patchRoute,
+  postRoute,
+  putRoute,
+  secureHandler,
+} from './route.js';
 
 const routes = {
   get: getRoute,
@@ -46,7 +54,11 @@ const router = (): Router => {
       }
       router.use(
         ...args.map((arg) =>
-          typeof arg === 'object' && 'getExpressRouter' in arg ? arg.getExpressRouter() : arg,
+          typeof arg === 'string'
+            ? arg
+            : typeof arg && 'getExpressRouter' in arg
+            ? arg.getExpressRouter()
+            : secureHandler(arg),
         ),
       );
       return self;
