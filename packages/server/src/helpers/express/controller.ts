@@ -5,7 +5,7 @@ export type Request = ExpressRequest;
 export type Response<Body = never> = ExpressResponse<Body>;
 
 export type RequestWithFields<
-  Fields extends object,
+  Fields extends Record<string, unknown>,
   BaseRequest extends Request = Request,
 > = BaseRequest & Fields;
 
