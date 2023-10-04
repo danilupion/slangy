@@ -14,6 +14,16 @@ export type RequestMaybeWithFields<
   BaseRequest extends Request = Request,
 > = RequestWithFields<Partial<Fields>, BaseRequest>;
 
+export type RequestWithLocals<
+  Locals extends Record<string, unknown>,
+  BaseRequest extends Request = Request,
+> = BaseRequest & { locals: Locals };
+
+export type RequestMaybeWithLocals<
+  Locals,
+  BaseRequest extends Request = Request,
+> = RequestWithLocals<Partial<Locals>, BaseRequest>;
+
 export type RequestWithBody<Body, BaseRequest extends Request = Request> = Omit<
   BaseRequest,
   'body'
