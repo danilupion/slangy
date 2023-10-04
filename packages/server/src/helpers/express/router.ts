@@ -46,7 +46,7 @@ const router = (): Router => {
       }
       router.use(
         ...args.map((arg) =>
-          typeof arg === 'object' && 'getExpressRouter' in args ? arg.getExpressRouter() : arg,
+          typeof arg === 'object' && 'getExpressRouter' in arg ? arg.getExpressRouter() : arg,
         ),
       );
       return self;
