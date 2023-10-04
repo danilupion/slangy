@@ -15,6 +15,7 @@ const routes = {
 
 type RouterUse = {
   (path: string, pathRouter: Router): Router;
+  (path: string, ...controllers: Controller[]): Router;
   (...controllers: Controller[]): Router;
 };
 
@@ -49,6 +50,11 @@ const router = (): Router => {
       } else {
         router.use(...args);
       }
+      router.use(
+        ...args.map((arg) =>
+          typeof arg === 'object' && 'getExpressRouter' in args ? arg.getExpressRouter() : arg,
+        ),
+      );
       return self;
     }) as RouterUse,
     ...(Object.keys(routes) as (keyof typeof routes)[]).reduce(
