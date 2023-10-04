@@ -21,10 +21,15 @@ const routes = {
   delete: deleteRoute,
 };
 
-type RouterUse<Req extends Request = Request, Res extends Response = Response> = {
+type RouterUse = {
   (path: string, pathRouter: Router): Router;
-  (path: string, ...controllers: Controller<Req, Res>[]): Router;
-  (...controllers: Controller<Req, Res>[]): Router;
+  <Req extends Request = Request, Res extends Response = Response>(
+    path: string,
+    ...controllers: Controller<Req, Res>[]
+  ): Router;
+  <Req extends Request = Request, Res extends Response = Response>(
+    ...controllers: Controller<Req, Res>[]
+  ): Router;
 };
 
 export type Router = {
