@@ -44,12 +44,6 @@ const router = (): Router => {
       if (frozen) {
         throw new Error('Cannot register routes after router has been frozen');
       }
-      if (typeof args[0] === 'string') {
-        const [path, pathRouter] = args;
-        router.use(path, pathRouter.getExpressRouter());
-      } else {
-        router.use(...args);
-      }
       router.use(
         ...args.map((arg) =>
           typeof arg === 'object' && 'getExpressRouter' in args ? arg.getExpressRouter() : arg,
