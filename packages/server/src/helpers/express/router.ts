@@ -22,13 +22,12 @@ const routes = {
 };
 
 type RouterUse = {
-  (path: string, pathRouter: Router): Router;
   <Req extends Request = Request, Res extends Response = Response>(
     path: string,
-    ...controllers: Controller<Req, Res>[]
+    ...controllers: (Router | Controller<Req, Res>)[]
   ): Router;
   <Req extends Request = Request, Res extends Response = Response>(
-    ...controllers: Controller<Req, Res>[]
+    ...controllers: (Router | Controller<Req, Res>)[]
   ): Router;
 };
 
