@@ -2,6 +2,10 @@ import Method from '@slangy/common/http/method.js';
 
 import { Router } from '../helpers/express/router.js';
 
+const areRegExpsEquivalent = (regexp1: RegExp, regexp2: RegExp) => {
+  return regexp1.source === regexp2.source && regexp1.flags === regexp2.flags;
+};
+
 // eslint-disable-next-line jest/no-export
 export default (
   router: Router,
@@ -18,10 +22,22 @@ export default (
         methods: s.route.methods,
       }));
 
+    let duplicateRoutes = 0;
+
     const registeredRouters: RegExp[] = router
       .getExpressRouter()
       .stack.filter((s) => !s.route)
-      .map((s) => s.regexp);
+      .map((s) => s.regexp)
+      // Remove duplicate regexps
+      .filter((regexp, index, self) => {
+        const isDuplicate = self.some((r, i) => i < index && areRegExpsEquivalent(regexp, r));
+        if (isDuplicate) {
+          duplicateRoutes++;
+        }
+        return !isDuplicate;
+      });
+
+    console.log(registeredRouters);
 
     // Copy routes to avoid mutating the original array and add a catch-all route
     const routesCopy = [...routes, '/*'];
@@ -46,8 +62,8 @@ export default (
       });
     });
 
-    it(`Should have exactly ${routesCopy.length} routes`, () => {
-      expect(router.getExpressRouter().stack).toHaveLength(routesCopy.length);
+    it(`Should have exactly ${routesCopy.length + duplicateRoutes} entry points`, () => {
+      expect(router.getExpressRouter().stack).toHaveLength(routesCopy.length + duplicateRoutes);
     });
 
     for (const check of extraChecks) {
