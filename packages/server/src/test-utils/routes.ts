@@ -37,8 +37,6 @@ export default (
         return !isDuplicate;
       });
 
-    console.log(registeredRouters);
-
     // Copy routes to avoid mutating the original array and add a catch-all route
     const routesCopy = [...routes, '/*'];
 
