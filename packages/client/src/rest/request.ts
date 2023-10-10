@@ -1,4 +1,5 @@
 import { BadRequestError, ValidationError } from '@slangy/common/rest/error.js';
+import { Serialized } from '@slangy/common/types.js';
 import { stringify } from 'qs';
 
 import {
@@ -68,7 +69,7 @@ const bodilessRequest =
 
 const request =
   (initFactory: () => RequestInit, noResponse = false) =>
-  <Body, Res, NoResponse extends boolean = false>(url: string, data: Body) =>
+  <Body, Res, NoResponse extends boolean = false>(url: string, data: Serialized<Body>) =>
     jsonFetch<Res, NoResponse>(
       url,
       {
@@ -78,7 +79,7 @@ const request =
       noResponse as NoResponse,
     );
 
-export const urlWithQuery = <Query extends object>(url: string, params: Query) => {
+export const urlWithQuery = <Query extends object>(url: string, params: Serialized<Query>) => {
   return `${url}?${stringify(params)}`;
 };
 
