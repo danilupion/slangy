@@ -69,8 +69,8 @@ const bodilessRequest =
 
 const request =
   (initFactory: () => RequestInit, noResponse = false) =>
-  <Body, Res, NoResponse extends boolean = false>(url: string, data: Serialized<Body>) =>
-    jsonFetch<Res, NoResponse>(
+  <Body, Res, NoResponse extends boolean = false>(url: string, data: Body) =>
+    jsonFetch<Serialized<Res>, NoResponse>(
       url,
       {
         ...initFactory(),
