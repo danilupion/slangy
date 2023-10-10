@@ -34,7 +34,7 @@
     "mongodb-memory-server": "^9.0.0"
   },
   "peerDependencies": {
-    "mongoose": "^7.5.4"
+    "mongoose": "^7.6.1"
   },
   "devDependencies": {
     "@jest/environment": "^29.7.0",
