@@ -23,3 +23,10 @@ export type Serialized<T> = {
     ? Serialized<T[K]>
     : T[K];
 };
+
+type Mergeable = { [key: string]: unknown };
+export type Merge<T extends Mergeable, U extends Mergeable> = {
+  [K in keyof U]: U[K];
+} & {
+  [K in Exclude<keyof T, keyof U>]: T[K];
+};
