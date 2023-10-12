@@ -1,38 +1,28 @@
 import useSWR, { SWRResponse } from 'swr';
 
 /**
- * Represents the shape of the data holder.
- */
-type DataHolder<T> = {
-  data: T | undefined;
-};
-
-/**
  * Describes the parameters required to create a custom fetch hook.
  *
- * @template T - The type of data being fetched.
- * @template FetcherReturnType - The type of data returned from the fetcher function.
  * @template FetcherArgs - The types of arguments accepted by the fetcher function.
- * @template ExtraFields - Additional fields that can extend the data holder.
+ * @template FetcherReturnType - The type of data returned from the fetcher function.
+ * @template TransformedType - The type of data returned from the transform function.
  */
 type CreateFetchHookParams<
-  T,
-  FetcherReturnType,
   FetcherArgs extends unknown[],
-  ExtraFields extends DataHolder<T>,
+  FetcherReturnType,
+  TransformedType, // This is a new type for the transformed data
 > = {
-  fetcher: (...args: FetcherArgs) => Promise<FetcherReturnType>; // A function responsible for data fetching.
-  swrKey: string; // The caching key used by SWR.
-  transform?: (data?: FetcherReturnType) => ExtraFields; // An optional function to transform or enrich the data.
+  fetcher: (...args: FetcherArgs) => Promise<FetcherReturnType>;
+  swrKey: string;
+  transform?: (data?: FetcherReturnType) => TransformedType;
 };
 
 /**
  * The shape of the response from the custom hook.
  */
-type HookResponse<T, ExtraFields> = {
+type HookResponse<T> = {
   data: T | undefined;
-} & ExtraFields &
-  Omit<SWRResponse, 'data'>;
+} & Omit<SWRResponse, 'data'>;
 
 /**
  * A utility hook to create a custom SWR hook with optional data transformation.
@@ -43,19 +33,19 @@ type HookResponse<T, ExtraFields> = {
  * @returns HookResponse A custom hook tailored to the given configuration.
  */
 const createFetchHook =
-  <T, FetcherReturnType, FetcherArgs extends unknown[], ExtraFields extends DataHolder<T>>({
+  <FetcherArgs extends unknown[], FetcherReturnType, TransformedType = FetcherReturnType>({
     fetcher,
-    transform,
     swrKey,
-  }: CreateFetchHookParams<T, FetcherReturnType, FetcherArgs, ExtraFields>) =>
-  (...args: FetcherArgs): HookResponse<T, ExtraFields> => {
+    transform = (data) => data as TransformedType,
+  }: CreateFetchHookParams<FetcherArgs, FetcherReturnType, TransformedType>) =>
+  (...args: FetcherArgs): HookResponse<TransformedType> => {
     const { data, ...rest } = useSWR([swrKey, args], ([, fetcherArgs]) => fetcher(...fetcherArgs));
 
-    const transformedData = transform ? transform(data) : ({ data } as ExtraFields);
+    const transformedData = transform(data);
 
     return {
       ...rest,
-      ...transformedData,
+      data: transformedData,
     };
   };
 
