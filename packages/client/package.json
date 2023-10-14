@@ -28,7 +28,7 @@
     "prettify": "prettier --write  \"./src/**/*.{ts,json}\""
   },
   "dependencies": {
-    "@slangy/common": "2.0.0",
+    "@slangy/common": "2.0.1",
     "qs": "^6.11.2",
     "type-fest": "^4.4.0"
   },
