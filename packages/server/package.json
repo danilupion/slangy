@@ -28,7 +28,7 @@
     "prettify": "prettier --write  \"./src/**/*.{ts,json}\""
   },
   "dependencies": {
-    "@slangy/common": "1.5.0",
+    "@slangy/common": "2.0.0",
     "config": "^3.3.8",
     "express-validator": "^7.0.1",
     "helmet": "^7.0.0",
