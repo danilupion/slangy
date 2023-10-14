@@ -27,7 +27,9 @@
     "lint": "eslint -c .eslintrc.json 'src/**/*.ts'",
     "prettify": "prettier --write  \"./src/**/*.{ts,json}\""
   },
-  "dependencies": {},
+  "dependencies": {
+    "type-fest": "^4.4.0"
+  },
   "devDependencies": {
     "@types/jest": "^29.5.5",
     "@types/node": "^20.8.6",
@@ -43,7 +45,6 @@
     "lint-staged": "^14.0.1",
     "nodemon": "^3.0.1",
     "prettier": "^3.0.3",
-    "type-fest": "^4.4.0",
     "typescript": "^5.2.2"
   },
   "lint-staged": {
