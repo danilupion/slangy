@@ -1,6 +1,6 @@
 import { BadRequestError, ValidationError } from '@slangy/common/rest/error.js';
-import { Serialized } from '@slangy/common/types.js';
 import { stringify } from 'qs';
+import { Jsonify } from 'type-fest';
 
 import {
   createInitForDelete,
@@ -58,7 +58,7 @@ const jsonFetch = async <Res, NoResponse>(
 const bodilessRequest =
   (initFactory: () => RequestInit, noResponse = false) =>
   <Res, NoResponse extends boolean = false>(url: string) => {
-    return jsonFetch<Serialized<Res>, NoResponse>(
+    return jsonFetch<Jsonify<Res>, NoResponse>(
       url,
       {
         ...initFactory(),
@@ -70,7 +70,7 @@ const bodilessRequest =
 const request =
   (initFactory: () => RequestInit, noResponse = false) =>
   <Body, Res, NoResponse extends boolean = false>(url: string, data: Body) =>
-    jsonFetch<Serialized<Res>, NoResponse>(
+    jsonFetch<Jsonify<Res>, NoResponse>(
       url,
       {
         ...initFactory(),
@@ -79,7 +79,7 @@ const request =
       noResponse as NoResponse,
     );
 
-export const urlWithQuery = <Query extends object>(url: string, params: Serialized<Query>) => {
+export const urlWithQuery = <Query extends object>(url: string, params: Jsonify<Query>) => {
   return `${url}?${stringify(params)}`;
 };
 

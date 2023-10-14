@@ -1,8 +1,9 @@
+import { Nullish } from '@slangy/common/types.js';
 import { NextFunction, Response } from 'express';
+import { Promisable } from 'type-fest/source/promisable.js';
 
 import { RequestMaybeWithFields } from '../../../helpers/express/controller.js';
 import { ClientErrorUnauthorized } from '../../../helpers/httpError.js';
-import { Nullable } from '../../../types.js';
 
 export type UserData<User extends object, Key extends string = 'user'> = {
   [key in Key]: User;
@@ -10,7 +11,7 @@ export type UserData<User extends object, Key extends string = 'user'> = {
 
 type UserMiddlewareOptions<User, ReqField extends string, AuthData> = {
   reqAuthField: ReqField;
-  userFactory: (auth: AuthData) => Promise<Nullable<User>> | Nullable<User>;
+  userFactory: (auth: AuthData) => Promisable<Nullish<User>>;
   mandatory?: boolean;
 };
 

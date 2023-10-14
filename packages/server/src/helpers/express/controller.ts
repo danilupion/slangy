@@ -1,5 +1,5 @@
-import { Serialized } from '@slangy/common/types.js';
 import { Request as ExpressRequest, Response as ExpressResponse, NextFunction } from 'express';
+import { Jsonify } from 'type-fest';
 
 export type Request = ExpressRequest;
 
@@ -29,7 +29,7 @@ export type RequestWithBody<Body, BaseRequest extends Request = Request> = Omit<
   BaseRequest,
   'body'
 > & {
-  body: Serialized<Body>;
+  body: Jsonify<Body>;
 };
 
 export type RequestMaybeWithBody<Body, BaseRequest extends Request = Request> = RequestWithBody<
@@ -38,7 +38,7 @@ export type RequestMaybeWithBody<Body, BaseRequest extends Request = Request> = 
 >;
 
 export type RequestWithQuery<Query, BaseRequest extends Request = Request> = BaseRequest & {
-  query: Serialized<Query>;
+  query: Jsonify<Query>;
 };
 
 export type RequestMaybeWithQuery<Query, BaseRequest extends Request = Request> = RequestWithQuery<
@@ -47,7 +47,7 @@ export type RequestMaybeWithQuery<Query, BaseRequest extends Request = Request> 
 >;
 
 export type RequestWithParams<Params, BaseRequest extends Request = Request> = BaseRequest & {
-  params: Serialized<Params>;
+  params: Jsonify<Params>;
 };
 
 export type ResponseWithBody<Body> = Response<Body>;
