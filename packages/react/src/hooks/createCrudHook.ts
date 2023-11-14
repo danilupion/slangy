@@ -89,6 +89,7 @@ const createCrudHook = <
   return function useData(...args: ReaderArgs) {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<Error | undefined>(undefined);
+    const [hasLoaded, setHasLoaded] = useState(false);
 
     const {
       data,
@@ -108,11 +109,12 @@ const createCrudHook = <
         } catch (err) {
           setError(err as Error);
         } finally {
+          setHasLoaded(true);
           setIsLoading(false);
         }
       };
 
-      if (data.length === 0) {
+      if (data.length === 0 && !hasLoaded) {
         fetchData();
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
