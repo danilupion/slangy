@@ -99,6 +99,8 @@ const createCrudHook = <
       remove: removeFromStore,
     } = store();
 
+    const shouldFetchData = !hasLoaded && !isLoading && !error;
+
     useEffect(() => {
       const fetchData = async () => {
         setIsLoading(true);
@@ -106,19 +108,22 @@ const createCrudHook = <
         try {
           const result = await read(...args);
           set(transform(result));
+          setHasLoaded(true);
         } catch (err) {
           setError(err as Error);
         } finally {
-          setHasLoaded(true);
           setIsLoading(false);
         }
       };
 
-      if (data.length === 0 && !hasLoaded) {
-        fetchData();
-      }
+      fetchData();
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [...args, set, data.length]);
+    }, [shouldFetchData]);
+
+    useEffect(() => {
+      hasLoaded && setHasLoaded(false);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [...args]);
 
     const extraProperties = extra ? extra(data) : undefined;
 
