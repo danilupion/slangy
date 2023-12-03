@@ -1,6 +1,9 @@
+import { ClientErrorStatusCode } from '@slangy/common/http/statusCode.js';
 import { BadRequestError, ValidationError } from '@slangy/common/rest/error.js';
 import { stringify } from 'qs';
 import { Jsonify } from 'type-fest';
+
+export const UnauthorizedErrorEvent = '@slangy/client:unauthorized';
 
 import {
   createInitForDelete,
@@ -18,17 +21,18 @@ type BadRequestResponse = SafeResponse<ValidationError>;
 
 const statusMiddleware = async <Res>(res: SafeResponse<Res> | BadRequestResponse) => {
   switch (res.status) {
-    case 400: {
+    case ClientErrorStatusCode.ClientErrorBadRequest: {
       const validationErrors = await (res as BadRequestResponse).json();
       throw new BadRequestError('Bad request error', validationErrors);
     }
-    case 401: {
-      // TODO: handle unauthorized
-      return res as SafeResponse<Res>;
+    case ClientErrorStatusCode.ClientErrorUnauthorized: {
+      const event = new CustomEvent(UnauthorizedErrorEvent, { detail: res });
+      window.dispatchEvent(event);
+      throw event;
     }
     default: {
-      if (res.status >= 400) {
-        // TODO: consider using a custom error class (maybe the one implemented in turbo-server -moving it to turbo-common-)
+      if (res.status >= 402) {
+        // TODO: consider using a custom error class
         const error = new Error('Request failed');
         error.cause = res.status;
         throw error;
