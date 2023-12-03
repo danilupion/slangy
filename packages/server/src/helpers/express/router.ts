@@ -61,8 +61,8 @@ const router = (): Router => {
           typeof arg === 'string'
             ? arg
             : typeof arg && 'getExpressRouter' in arg
-            ? arg.getExpressRouter()
-            : secureHandler(arg),
+              ? arg.getExpressRouter()
+              : secureHandler(arg),
         ),
       );
       return self;

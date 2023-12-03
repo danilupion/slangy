@@ -5,32 +5,54 @@ import { Promisable } from 'type-fest/source/promisable.js';
 import { RequestMaybeWithFields } from '../../../helpers/express/controller.js';
 import { ClientErrorUnauthorized } from '../../../helpers/httpError.js';
 
+import { DefaultRequestJwtUserProperty, defaultRequestJwtUserProperty } from './jwt.js';
+
+const defaultRequestUserProperty = 'user';
+
+type DefaultRequestUserProperty = typeof defaultRequestUserProperty;
+
 export type UserData<User extends object, Key extends string = 'user'> = {
   [key in Key]: User;
 };
 
-type UserMiddlewareOptions<User, ReqField extends string, AuthData> = {
-  reqAuthField: ReqField;
-  userFactory: (auth: AuthData) => Promisable<Nullish<User>>;
+type UserMiddlewareOptions<
+  UserData,
+  AuthDataReqField extends string,
+  UserDataReqField extends string,
+  AuthData,
+> = {
+  reqAuthField?: AuthDataReqField;
+  reqUserField?: UserDataReqField;
+  userFactory: (auth: AuthData) => Promisable<Nullish<UserData>>;
   mandatory?: boolean;
 };
 
+// TODO reqAuthField is the entry one, we need also output one (eg: jwtUser and user)
 const user =
-  <AuthData, User, ReqField extends string>({
-    reqAuthField,
+  <
+    AuthData,
+    UserData,
+    AuthDataReqField extends string = DefaultRequestJwtUserProperty,
+    UserDataReqField extends string = DefaultRequestUserProperty,
+  >({
+    reqAuthField = defaultRequestJwtUserProperty as AuthDataReqField,
+    reqUserField = defaultRequestUserProperty as UserDataReqField,
     userFactory,
     mandatory = true,
-  }: UserMiddlewareOptions<User, ReqField, AuthData>) =>
+  }: UserMiddlewareOptions<UserData, AuthDataReqField, UserDataReqField, AuthData>) =>
   async (
-    req: RequestMaybeWithFields<{ [key in ReqField]: AuthData }>,
+    req: RequestMaybeWithFields<
+      { [key in AuthDataReqField]: AuthData } & { [key in UserDataReqField]: UserData }
+    >,
     _res: Response,
     next: NextFunction,
   ) => {
     if (req[reqAuthField]) {
-      const user = await userFactory(req[reqAuthField] as AuthData);
+      const user: UserData = (await userFactory(req[reqAuthField] as AuthData)) as UserData;
 
       if (user) {
-        req.user = user;
+        // TODO: review why this is even needed, types seem to be correct
+        req[reqUserField] = user as (typeof req)[UserDataReqField];
         return next();
       }
     }

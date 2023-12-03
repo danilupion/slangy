@@ -8,7 +8,10 @@ import { ExtractJwt, Strategy as JwtStrategy, VerifiedCallback } from 'passport-
 import { RequestWithFields } from '../../../helpers/express/controller.js';
 import { ClientErrorForbidden, ClientErrorUnauthorized } from '../../../helpers/httpError.js';
 
-export const defaultProperty = 'jwtUser';
+export const defaultRequestJwtUserProperty = 'jwtUser';
+
+export type DefaultRequestJwtUserProperty = typeof defaultRequestJwtUserProperty;
+
 const mandatoryJwtStrategyName = 'turbo-jwt-mandatory';
 const optionalJwtStrategyName = 'turbo-jwt-optionnal';
 const anonymousStrategyName = 'turbo-anonymous';
@@ -21,7 +24,10 @@ export interface Jwt<UserRole extends string = string> {
   role: UserRole;
 }
 
-export type JwtData<UserRole extends string = string, Key extends string = 'jwtUser'> = {
+export type JwtData<
+  UserRole extends string = string,
+  Key extends string = DefaultRequestJwtUserProperty,
+> = {
   [key in Key]: Jwt<UserRole>;
 };
 
@@ -59,7 +65,7 @@ passport.use(mandatoryJwtStrategyName, mandatoryJwtStrategy);
 passport.use(optionalJwtStrategyName, optionalJwtStrategy);
 passport.use(anonymousStrategyName, new AnonymousStrategy());
 
-const jwtAuth = ({ requestProperty = defaultProperty, mandatory = true } = {}) => {
+const jwtAuth = ({ requestProperty = defaultRequestJwtUserProperty, mandatory = true } = {}) => {
   return passport.authenticate(
     mandatory ? mandatoryJwtStrategyName : [optionalJwtStrategyName, anonymousStrategyName],
     {
@@ -97,7 +103,7 @@ export const generateToken = (
 export const hasRole =
   <UserRole extends string, Key extends string>(
     roles: UserRole[],
-    requestProperty: Key = defaultProperty as Key,
+    requestProperty: Key = defaultRequestJwtUserProperty as Key,
   ) =>
   (req: RequestWithFields<JwtData<UserRole, Key>>, res: Response, next: NextFunction) => {
     jwtAuth({ requestProperty })(req, res, () => {
