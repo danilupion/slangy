@@ -48,7 +48,7 @@ const user =
     next: NextFunction,
   ) => {
     if (req[reqAuthField]) {
-      const user: UserData = (await userFactory(req[reqAuthField] as AuthData)) as UserData;
+      const user = await userFactory(req[reqAuthField] as AuthData);
 
       if (user) {
         // TODO: review why this is even needed, types seem to be correct
