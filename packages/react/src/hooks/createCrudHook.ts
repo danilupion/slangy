@@ -3,43 +3,32 @@ import { useEffect, useState } from 'react';
 import { CrudStore } from '../stores/createCrudStore.js';
 
 /**
- * A function that removes an item from a collection based on its ID.
- *
- * @template Item The type of the collection item.
- * @template ItemId The type of the item's identifier.
- */
-type CrudRemover<Item, ItemId extends keyof Item, DeletionResponse = void> = (
-  itemId: Item[ItemId],
-) => Promise<DeletionResponse>;
-
-/**
  * Parameters required to create a custom CRUD hook.
  *
  * @template ReaderArgs The types of arguments accepted by the read function.
  * @template CreateItemType The type of item being created.
  * @template UpdateItemType The type of item being updated.
+ * @template DeletionReturnType The type of the result of a deletion.
  * @template ReaderReturnType The type of data returned from the read function.
  * @template Extra Any extra properties or methods the resulting hook should have.
  * @template TransformedType The type of data returned after optional transformation.
  * @template ItemId The type of the item's identifier in the transformed data.
- * @template Remover The type for the remove function.
  */
 type CreateCrudHookParams<
   ReaderArgs extends unknown[],
   CreateItemType,
   UpdateItemType,
+  DeletionReturnType,
   ReaderReturnType,
   Extra,
-  DeletionResult,
   TransformedType,
   ItemId extends keyof TransformedType,
-  Remover extends CrudRemover<TransformedType, ItemId, DeletionResult>,
 > = {
   store: () => CrudStore<TransformedType, ItemId>;
   create: (item: CreateItemType) => Promise<TransformedType>;
   read: (...args: ReaderArgs) => Promise<ReaderReturnType>;
   update: (item: UpdateItemType) => Promise<TransformedType>;
-  remove: Remover;
+  remove: (itemId: TransformedType[ItemId]) => Promise<DeletionReturnType>;
   transform?: (data?: ReaderReturnType) => TransformedType[];
   extra?: (data: TransformedType[]) => Extra;
 };
@@ -50,6 +39,7 @@ type CreateCrudHookParams<
  * @template ReaderArgs The types of arguments accepted by the read function.
  * @template CreateItemType The type of item being created.
  * @template UpdateItemType The type of item being updated.
+ * @template DeletionReturnType The type of the result of a deletion.
  * @template ReaderReturnType The type of data returned from the read function.
  * @template Extra Any extra properties or methods the resulting hook should have.
  * @template TransformedType The type of data returned after optional transformation.
@@ -60,16 +50,11 @@ const createCrudHook = <
   ReaderArgs extends unknown[],
   CreateItemType,
   UpdateItemType,
+  DeletionReturnType,
   ReaderReturnType,
   Extra,
-  DeletionResult,
   TransformedType = ReaderReturnType,
   ItemId extends keyof TransformedType = 'id' extends keyof TransformedType ? 'id' : never,
-  Remove extends CrudRemover<TransformedType, ItemId, DeletionResult> = CrudRemover<
-    TransformedType,
-    ItemId,
-    DeletionResult
-  >,
 >({
   store,
   create,
@@ -82,12 +67,11 @@ const createCrudHook = <
   ReaderArgs,
   CreateItemType,
   UpdateItemType,
+  DeletionReturnType,
   ReaderReturnType,
   Extra,
-  DeletionResult,
   TransformedType,
-  ItemId,
-  Remove
+  ItemId
 >) => {
   /**
    * Hook that provides CRUD operations and manages data state.
