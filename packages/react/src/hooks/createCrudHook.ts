@@ -8,7 +8,9 @@ import { CrudStore } from '../stores/createCrudStore.js';
  * @template Item The type of the collection item.
  * @template ItemId The type of the item's identifier.
  */
-type CrudRemover<Item, ItemId extends keyof Item> = (itemId: Item[ItemId]) => Promise<void>;
+type CrudRemover<Item, ItemId extends keyof Item, DeletionResponse = void> = (
+  itemId: Item[ItemId],
+) => Promise<DeletionResponse>;
 
 /**
  * Parameters required to create a custom CRUD hook.
@@ -28,9 +30,10 @@ type CreateCrudHookParams<
   UpdateItemType,
   ReaderReturnType,
   Extra,
+  DeletionResult,
   TransformedType,
   ItemId extends keyof TransformedType,
-  Remover extends CrudRemover<TransformedType, ItemId>,
+  Remover extends CrudRemover<TransformedType, ItemId, DeletionResult>,
 > = {
   store: () => CrudStore<TransformedType, ItemId>;
   create: (item: CreateItemType) => Promise<TransformedType>;
@@ -59,9 +62,14 @@ const createCrudHook = <
   UpdateItemType,
   ReaderReturnType,
   Extra,
+  DeletionResult,
   TransformedType = ReaderReturnType,
   ItemId extends keyof TransformedType = 'id' extends keyof TransformedType ? 'id' : never,
-  Remove extends CrudRemover<TransformedType, ItemId> = CrudRemover<TransformedType, ItemId>,
+  Remove extends CrudRemover<TransformedType, ItemId, DeletionResult> = CrudRemover<
+    TransformedType,
+    ItemId,
+    DeletionResult
+  >,
 >({
   store,
   create,
@@ -76,6 +84,7 @@ const createCrudHook = <
   UpdateItemType,
   ReaderReturnType,
   Extra,
+  DeletionResult,
   TransformedType,
   ItemId,
   Remove
@@ -136,8 +145,9 @@ const createCrudHook = <
         createInStore(newItem);
       },
       async remove(itemId: TransformedType[ItemId]) {
-        await remove(itemId);
+        const result = await remove(itemId);
         removeFromStore(itemId);
+        return result;
       },
       async update(item: UpdateItemType) {
         const updatedItem = await update(item);
