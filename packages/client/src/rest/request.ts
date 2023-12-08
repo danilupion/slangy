@@ -97,4 +97,5 @@ export const bodilessPatchRequest = bodilessRequest(createInitForPatch);
 export const putRequest = request(createInitForPut);
 export const responselessPutRequest = request(createInitForPut, true);
 export const bodilessPutRequest = bodilessRequest(createInitForPut);
-export const deleteRequest = bodilessRequest(createInitForDelete, true);
+export const deleteRequest = bodilessRequest(createInitForDelete, false);
+export const responselessDeleteRequest = bodilessRequest(createInitForDelete, true);
