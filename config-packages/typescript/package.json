@@ -1,0 +1,26 @@
+{
+  "name": "@slangy-config/typescript",
+  "version": "1.0.0",
+  "author": {
+    "name": "Dani Lupión",
+    "email": "danilupion@gmail.com"
+  },
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    "./*": "./src/*"
+  },
+  "scripts": {
+    "lint": "eslint . --max-warnings=0",
+    "lint:fix": "eslint . --fix --max-warnings=0"
+  },
+  "dependencies": {},
+  "peerDependencies": {
+    "eslint": "^8.57.0"
+  },
+  "devDependencies": {
+    "@slangy-config/eslint": "workspace:*",
+    "@slangy-config/lint-staged": "workspace:*",
+    "typescript": "^5.4.5"
+  }
+}
