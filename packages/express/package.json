@@ -15,25 +15,38 @@
     "build:watch": "rm -rf ./dist && tsc --watch",
     "build:check": "tsc --noEmit",
     "lint": "eslint . --max-warnings 0",
-    "lint:fix": "eslint . --fix --max-warnings 0"
+    "lint:fix": "eslint . --fix --max-warnings 0",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest watch"
   },
   "dependencies": {
     "@slangy/config": "workspace:*",
+    "@slangy/http": "workspace:*",
     "chalk": "^5.3.0",
     "express": "^4.19.2",
+    "express-validator": "^7.1.0",
     "helmet": "^7.1.0",
+    "http-errors": "^2.0.0",
     "morgan": "^1.10.0"
   },
   "peerDependencies": {
+    "@vitest/coverage-v8": "^1.6.0",
     "eslint": "^8.57.0",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "vitest": "^1.6.0"
   },
   "devDependencies": {
     "@slangy-config/eslint": "workspace:*",
     "@slangy-config/lint-staged": "workspace:*",
     "@slangy-config/typescript": "workspace:*",
+    "@slangy-config/vitest": "workspace:*",
     "@types/express": "^4.17.21",
+    "@types/http-errors": "^2.0.4",
     "@types/morgan": "^1.9.9",
-    "@types/node": "^20.12.11"
+    "@types/node": "^20.14.2",
+    "@types/supertest": "^6.0.2",
+    "supertest": "^7.0.0",
+    "type-fest": "^4.19.0"
   }
 }

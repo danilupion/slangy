@@ -14,13 +14,14 @@
     "lint": "eslint . --max-warnings=0",
     "lint:fix": "eslint . --fix --max-warnings=0"
   },
-  "dependencies": {},
+  "dependencies": {
+    "typescript": "^5.4.5"
+  },
   "peerDependencies": {
     "eslint": "^8.57.0"
   },
   "devDependencies": {
     "@slangy-config/eslint": "workspace:*",
-    "@slangy-config/lint-staged": "workspace:*",
-    "typescript": "^5.4.5"
+    "@slangy-config/lint-staged": "workspace:*"
   }
 }

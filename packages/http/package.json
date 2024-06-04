@@ -1,5 +1,5 @@
 {
-  "name": "@slangy/config",
+  "name": "@slangy/http",
   "version": "1.0.0",
   "author": {
     "name": "Dani Lupión",
@@ -16,24 +16,19 @@
     "build:watch": "rm -rf ./dist && tsc --watch",
     "build:check": "tsc --noEmit",
     "lint": "eslint . --max-warnings 0",
-    "lint:fix": "eslint . --fix --max-warnings 0",
-    "test": "vitest run",
-    "test:coverage": "vitest run --coverage",
-    "test:watch": "vitest watch"
+    "lint:fix": "eslint . --fix --max-warnings 0"
   },
   "dependencies": {
-    "config": "^3.3.11"
+    "http-status-codes": "^2.3.0"
   },
   "peerDependencies": {
-    "@vitest/coverage-v8": "^1.6.0",
-    "typescript": "^5.4.5",
-    "vitest": "^1.6.0"
+    "eslint": "^8.57.0",
+    "typescript": "^5.4.5"
   },
   "devDependencies": {
     "@slangy-config/eslint": "workspace:*",
     "@slangy-config/lint-staged": "workspace:*",
     "@slangy-config/typescript": "workspace:*",
-    "@slangy-config/vitest": "workspace:*",
-    "@types/config": "^3.3.4"
+    "@types/node": "^20.14.2"
   }
 }

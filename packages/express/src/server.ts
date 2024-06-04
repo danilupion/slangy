@@ -1,13 +1,15 @@
 import { createServer } from 'node:http';
 
-// import errorHandler from '../middleware/errorHandler.js';
-// import notFoundHandler from '../middleware/notFoundHandler.js';
+import config from '@slangy/config';
 // import { Router } from './router.js';
 import { mode, runsInProductionMode } from '@slangy/config/mode.js';
 import chalk from 'chalk';
 import express, { json, static as staticMiddleware } from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
+
+import errorHandler from './middleware/errorHandler.js';
+import notFoundHandler from './middleware/notFoundHandler.js';
 
 const app = express();
 
@@ -19,7 +21,6 @@ type ServerOptions = {
   port?: number;
   // routes?: [string, Router][];
   spaFilePath?: string;
-  init?: () => Promise<void>;
 };
 
 const server = async ({
@@ -27,21 +28,11 @@ const server = async ({
   acceptJson,
   jsonBodyParserLimits,
   staticsPath,
-  port = 3000,
+  port = config.has('server.port') ? config.get<number>('server.port') : 3000,
   // routes,
   spaFilePath,
-  init,
 }: ServerOptions = {}) => {
-  // Configure some security headers
-  // if (isDev) {
-  app.use(helmet({ contentSecurityPolicy: false }));
-  // Register HTTP request logger
-  // } else {
-  //   app.use(helmet());
-  //   // Register HTTP request logger
-  //   app.use(morgan(loggerFormat));
-  // }
-
+  app.use(helmet());
   app.use(morgan(loggerFormat));
 
   if (acceptJson) {
@@ -67,17 +58,13 @@ const server = async ({
     });
   }
 
-  // // Register custom not found handler
-  // app.use(notFoundHandler);
-  //
-  // // Register custom error handler (should registered the last)
-  // app.use(errorHandler);
+  // Register custom not found handler
+  app.use(notFoundHandler);
+
+  // Register custom error Middleware (should registered the last)
+  app.use(errorHandler);
 
   const httpServer = createServer(app);
-
-  if (init) {
-    await init();
-  }
 
   httpServer.listen(port);
 

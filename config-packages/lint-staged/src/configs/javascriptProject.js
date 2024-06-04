@@ -1,5 +1,6 @@
-import { eslintJavascriptTask } from '../subtasks.js';
+import { eslintJavascriptTask, prettierlAllTask } from '../subtasks.js';
 
 export default {
+  ...prettierlAllTask,
   ...eslintJavascriptTask,
 };

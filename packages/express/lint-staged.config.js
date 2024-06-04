@@ -1,5 +1,5 @@
-import { noTests } from '@slangy-config/lint-staged/typescriptProject.js';
+import typescriptProject from '@slangy-config/lint-staged/typescriptProject.js';
 
 export default {
-  ...noTests,
+  ...typescriptProject,
 };
