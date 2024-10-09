@@ -1,7 +1,7 @@
 import { StatusCodes } from '@slangy/http';
 import { NextFunction } from 'express';
 import { FieldValidationError, ValidationError, validationResult } from 'express-validator';
-import createError, { InternalServerError, isHttpError } from 'http-errors';
+import createError from 'http-errors';
 
 import { Controller, Request, Response } from './controller.js';
 
@@ -49,7 +49,7 @@ const validationErrorMapper = (errors: CustomValidationError[]): MappedValidatio
 };
 
 const errorMapper = (err: Error) => {
-  if (isHttpError(err)) {
+  if (createError.isHttpError(err)) {
     return err;
   }
 
@@ -74,7 +74,7 @@ const secureHandler =
 
       return await insecureHandler(req, res, next);
     } catch (err) {
-      return next(err instanceof Error ? errorMapper(err) : new InternalServerError());
+      return next(err instanceof Error ? errorMapper(err) : new createError.InternalServerError());
     }
   };
 

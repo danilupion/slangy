@@ -8,7 +8,7 @@
   "license": "MIT",
   "type": "module",
   "exports": {
-    "./*": "./dist/*"
+    ".": "./dist/index.js"
   },
   "scripts": {
     "build": "rm -rf ./dist && tsc",

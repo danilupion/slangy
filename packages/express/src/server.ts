@@ -8,8 +8,9 @@ import express, { json, static as staticMiddleware } from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
 
-import errorHandler from './middleware/errorHandler.js';
-import notFoundHandler from './middleware/notFoundHandler.js';
+import errorHandler from './core/middleware/errorHandler.js';
+import notFoundHandler from './core/middleware/notFoundHandler.js';
+import { Router } from './core/router.js';
 
 const app = express();
 
@@ -19,7 +20,7 @@ type ServerOptions = {
   jsonBodyParserLimits?: string | number;
   staticsPath?: string;
   port?: number;
-  // routes?: [string, Router][];
+  routes?: [string, Router][];
   spaFilePath?: string;
 };
 
@@ -29,7 +30,7 @@ const server = async ({
   jsonBodyParserLimits,
   staticsPath,
   port = config.has('server.port') ? config.get<number>('server.port') : 3000,
-  // routes,
+  routes,
   spaFilePath,
 }: ServerOptions = {}) => {
   app.use(helmet());
@@ -45,11 +46,12 @@ const server = async ({
     app.use(staticMiddleware(staticsPath));
   }
 
-  // if (routes) {
-  //   for (const [path, router] of routes) {
-  //     app.use(path, router.getExpressRouter());
-  //   }
-  // }
+  if (routes) {
+    for (const [path, router] of routes) {
+      console.log('path', path);
+      app.use(path, router.getExpressRouter());
+    }
+  }
 
   if (spaFilePath) {
     // Catch all routes to serve the SPA
@@ -58,10 +60,10 @@ const server = async ({
     });
   }
 
-  // Register custom not found handler
+  // Register not found handler
   app.use(notFoundHandler);
 
-  // Register custom error Middleware (should registered the last)
+  // Register error Middleware (should be registered the last)
   app.use(errorHandler);
 
   const httpServer = createServer(app);

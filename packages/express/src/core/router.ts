@@ -1,5 +1,5 @@
 import { Router as ExpressRouter } from 'express';
-import { NotImplemented } from 'http-errors';
+import createError from 'http-errors';
 
 import { Controller, Request, Response } from './controller.js';
 import { deleteRoute, getRoute, MethodHandlers, patchRoute, postRoute, putRoute } from './route.js';
@@ -78,7 +78,7 @@ const router = (): Router => {
     getExpressRouter: () => {
       if (!frozen) {
         router.use('*', () => {
-          throw new NotImplemented();
+          throw new createError.NotImplemented();
         });
         frozen = true;
       }

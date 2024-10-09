@@ -1,7 +1,7 @@
-import { NotFound } from 'http-errors';
+import createError from 'http-errors';
 
 const notFoundHandler = (): void => {
-  throw new NotFound();
+  throw new createError.NotFound();
 };
 
 export default notFoundHandler;
