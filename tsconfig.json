@@ -1,0 +1,3 @@
+{
+  "extends": "@slangy-config/typescript/base.json"
+}

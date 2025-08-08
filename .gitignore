@@ -1,3 +1,5 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
 # IDEs and editors
 /.idea
 .project
@@ -18,34 +20,39 @@ yarn-error.log*
 #config files
 config.json
 
-# compiled output
-dist/
-tmp/
-build/
-out-tsc/
+# Dependencies
+node_modules
+.pnp
+.pnp.js
 
-# dependencies
-node_modules/
-
-# testing
-coverage/
-
-# misc
-.DS_Store
-Thumbs.db
+# Local env files
+.env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
 
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
+# Testing
+coverage
 
-# Swap the comments on the following lines if you don't wish to use zero-installs
-# Documentation here: https://yarnpkg.com/features/zero-installs
-#!.yarn/cache
-.pnp.*
+# Turbo
+.turbo
+
+# Vercel
+.vercel
+
+# Build Outputs
+.next/
+out/
+build/
+dist/
+out-tsc/
+
+# Misc
+.DS_Store
+Thumbs.db
+*.pem
+tmp/
+
+# Caches
+.eslintcache
